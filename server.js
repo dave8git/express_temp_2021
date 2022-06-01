@@ -4,6 +4,18 @@ const app = express();
 const multer = require('multer');
 const hbs = require('express-handlebars');
 const { callbackify } = require('util');
+
+const fileStorageEngine = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname)
+    }
+});
+
+const upload = multer({ storage: fileStorageEngine });
+
 const port = 8000;
 
 app.engine('.hbs', hbs());
@@ -15,16 +27,7 @@ app.set('view engine', '.hbs');
 //     };
 //     next();
 // });
-const storage = multer.diskStorage({
-    destination: path.join(__dirname, '/public'),
-    filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
 
-const upload = multer({
-    storage: storage
-}).single('image');
 
 app.use(express.static(path.join(__dirname, '/public')));
 
@@ -36,12 +39,6 @@ app.get('/hello/:name', (req, res) => {
     res.render('hello', { layout: false, name: req.params.name });
 });
 
-app.post('/contact/send-message', (req, res) => {
-    upload(req, res => {
-        console.log(req.file);
-        res.send('test');
-    });
-});
 
 app.get('/', (req, res) => {
     res.render('index');
@@ -62,16 +59,21 @@ app.get('/history', (req, res) => {
     res.render('history');
 });
 
-app.post('/contact/send-message', (req, res) => {
+app.post('/contact/send-message', upload.single('image'), (req, res) => {
   const { author, sender, title, message, image } = req.body;
 
-  if(author && sender && title && message && image) {
-    res.render('contact', {message: "Awesome"});
+  if(author && sender && title && message) {
+    res.render('contact', {message: `Awesome & file ${image} has been saved`});
   }
   else {
     res.render('contact', {error: "Not so awesome!"});
   }
 });
+
+// app.post("/contact/send-message", upload.single('image'), (req, res) => {
+//     console.log(req.file);
+//     res.send("Single File upload success");
+// });
 
 app.use((req, res) => {
     res.status(404).send('404 not found...');
