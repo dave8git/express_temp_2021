@@ -61,9 +61,9 @@ app.get('/history', (req, res) => {
 
 app.post('/contact/send-message', upload.single('image'), (req, res) => {
   const { author, sender, title, message, image } = req.body;
-
+    console.log(req.body.image);
   if(author && sender && title && message) {
-    res.render('contact', {message: `Awesome & file ${image} has been saved`});
+    res.render('contact', {message: `Awesome & file ${req.file.name} has been saved`});
   }
   else {
     res.render('contact', {error: "Not so awesome!"});
