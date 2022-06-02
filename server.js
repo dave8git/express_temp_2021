@@ -62,7 +62,7 @@ app.get('/history', (req, res) => {
 app.post('/contact/send-message', upload.single('image'), (req, res) => {
   const { author, sender, title, message, image } = req.body;
     console.log(req.body.image);
-  if(author && sender && title && message && req.body.image) {
+  if(author && sender && title && message) {
     res.render('contact', {message: `Awesome & file ${req.file.name} has been saved`});
   }
   else {
@@ -77,5 +77,3 @@ app.use((req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
 });
-
-//app.listen(8000); // można zrobić bez funkcji callback po prostu, żeby nasłuchiwał na porcie 8000
