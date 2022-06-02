@@ -62,18 +62,13 @@ app.get('/history', (req, res) => {
 app.post('/contact/send-message', upload.single('image'), (req, res) => {
   const { author, sender, title, message, image } = req.body;
     console.log(req.body.image);
-  if(author && sender && title && message) {
+  if(author && sender && title && message && req.body.image) {
     res.render('contact', {message: `Awesome & file ${req.file.name} has been saved`});
   }
   else {
     res.render('contact', {error: "Not so awesome!"});
   }
 });
-
-// app.post("/contact/send-message", upload.single('image'), (req, res) => {
-//     console.log(req.file);
-//     res.send("Single File upload success");
-// });
 
 app.use((req, res) => {
     res.status(404).send('404 not found...');
